@@ -23,9 +23,73 @@ def is_valid_url(url):
 def sanitize_filename(filename):
     return re.sub(r'[^\w\-_\. ]', '_', filename)
 
+# Direct HTML code
+HTML_TEMPLATE = """
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Downloader</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 50px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+        h2 {
+            color: #333;
+            text-align: center;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            margin: 15px 0;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            font-size: 18px;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>YouTube Video Downloader</h2>
+        <form method="POST" action="/download">
+            <input type="text" name="url" placeholder="Enter YouTube Video URL" required>
+            <button type="submit">Download</button>
+        </form>
+    </div>
+</body>
+</html>
+"""
+
 @app.route('/')
 def index():
-    return render_template('index.html')
+    return render_template(HTML_TEMPLATE)
 
 @app.route('/download', methods=['POST'])
 def download():
