@@ -1,6 +1,11 @@
+import nest_asyncio
 from flask import Flask, render_template_string, request, send_file
 import yt_dlp
 import os
+import threading
+
+# Apply nest_asyncio to allow Flask to run inside Jupyter
+nest_asyncio.apply()
 
 # Initialize Flask app
 app = Flask(__name__)
@@ -91,6 +96,9 @@ def index():
 
     return render_template_string(HTML_TEMPLATE)  # Show form using inline HTML
 
-# Run Flask in production
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
+# Run Flask in a separate thread
+def run_flask():
+    app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
+
+thread = threading.Thread(target=run_flask)
+thread.start()
