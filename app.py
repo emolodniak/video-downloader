@@ -1,6 +1,6 @@
 import os
 import logging
-from flask import Flask, render_template, request, send_file, jsonify
+from flask import Flask, render_template_string, request, send_file, jsonify
 import yt_dlp
 from urllib.parse import urlparse
 import tempfile
@@ -89,7 +89,7 @@ HTML_TEMPLATE = """
 
 @app.route('/')
 def index():
-    return render_template(HTML_TEMPLATE)
+    return render_template_string(HTML_TEMPLATE)
 
 @app.route('/download', methods=['POST'])
 def download():
