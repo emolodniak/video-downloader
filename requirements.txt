@@ -1,3 +1,4 @@
+yt-dlp==2025.2.19
 click==8.1.8
 dnspython==2.7.0
 email-validator==2.2.0
