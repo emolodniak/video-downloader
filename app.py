@@ -13,7 +13,11 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 app.secret_key = os.environ.get("SESSION_SECRET", "default-secret-key")
 
+# Get PORT from environment (required for Render)
+PORT = int(os.environ.get("PORT", 5000))
+
 def is_valid_url(url):
+    """Check if the provided URL is valid."""
     try:
         result = urlparse(url)
         return all([result.scheme, result.netloc])
@@ -21,9 +25,10 @@ def is_valid_url(url):
         return False
 
 def sanitize_filename(filename):
+    """Sanitize the filename to prevent issues."""
     return re.sub(r'[^\w\-_\. ]', '_', filename)
 
-# Direct HTML code
+# Simple HTML template
 HTML_TEMPLATE = """
 <!DOCTYPE html>
 <html lang="en">
@@ -93,11 +98,12 @@ def index():
 
 @app.route('/download', methods=['POST'])
 def download():
+    """Handles video download."""
     video_url = request.form.get('url')
-    
+
     if not video_url:
         return jsonify({'error': 'No URL provided'}), 400
-    
+
     if not is_valid_url(video_url):
         return jsonify({'error': 'Invalid URL format'}), 400
 
@@ -106,17 +112,17 @@ def download():
             ydl_opts = {
                 'format': 'best',
                 'outtmpl': os.path.join(temp_dir, '%(title)s.%(ext)s'),
-                'progress_hooks': [],
             }
 
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
                 info = ydl.extract_info(video_url, download=True)
                 filename = ydl.prepare_filename(info)
-                
+
                 if not os.path.exists(filename):
                     return jsonify({'error': 'Download failed'}), 500
                 
                 safe_filename = sanitize_filename(os.path.basename(filename))
+
                 return send_file(
                     filename,
                     as_attachment=True,
@@ -128,4 +134,4 @@ def download():
         return jsonify({'error': 'Download failed: ' + str(e)}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(host='0.0.0.0', port=PORT)
